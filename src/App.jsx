@@ -13,7 +13,7 @@ import { CartProvider } from "./components/CartContext.jsx";
 import { WishlistProvider } from "./components/WishlistContext.jsx";
 import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
 
-// 🔒 Protected Route Component
+// Protected Route Component
 const PrivateRoute = ({ element }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? element : <Navigate to="/login" replace />;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCart } from './CartContext'; // Ensure this exists
+import { useCart } from './CartContext';
 import { FaTrash } from 'react-icons/fa';
 
 const AddressInput = ({ label, name, type, value, onChange }) => (

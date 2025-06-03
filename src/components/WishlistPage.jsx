@@ -14,7 +14,7 @@ const WishlistPage = () => {
     removeFromWishlist(item.id);
   };
 
-  if (wishlist.length === 0)
+  if (!wishlist || wishlist.length === 0)
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center h-[70vh] text-gray-400">
@@ -62,7 +62,7 @@ const WishlistPage = () => {
               </h2>
               <p className="text-sm text-gray-500">{item.brand}</p>
               <p className="text-pink-600 font-bold mt-1">
-                ${item.price.toFixed(2)}
+                ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
               </p>
 
               <div className="mt-auto flex justify-between items-center">

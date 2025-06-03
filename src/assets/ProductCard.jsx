@@ -1,4 +1,3 @@
-// src/components/ProductCard.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../components/CartContext";
@@ -6,15 +5,15 @@ import { useWishlist } from "../components/WishlistContext";
 import { FaShoppingCart } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
-  const { cartItems, addToCart, removeFromCart } = useCart();
+  const { cart, addToCart, removeFromCart } = useCart(); // Using the original working logic
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const [inCart, setInCart] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
 
   useEffect(() => {
-    setInCart(cartItems.some((item) => item.id === product.id));
-  }, [cartItems, product.id]);
+    setInCart(cart.some((item) => item.id === product.id));
+  }, [cart, product.id]);
 
   useEffect(() => {
     setWishlisted(wishlist.some((item) => item.id === product.id));
@@ -37,10 +36,11 @@ const ProductCard = ({ product }) => {
             alt={product.name}
             className="w-full h-52 object-cover rounded-t-xl transition-transform duration-500 group-hover:scale-105"
           />
-          {/* Gradient Overlay */}
+          {/* Optional Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-70 rounded-t-xl" />
         </Link>
-        {/* Wishlist Floating Icon */}
+
+        {/* Wishlist Button */}
         <button
           onClick={toggleWishlist}
           className={`absolute top-2 right-2 p-2 rounded-full transition-all duration-300 backdrop-blur-sm bg-white/80 shadow-md hover:scale-110 ${
@@ -67,7 +67,7 @@ const ProductCard = ({ product }) => {
 
       <div className="p-4 flex flex-col flex-grow">
         <Link to={`/product/${product.id}`}>
-          <h3 className="text-lg font-bold text-gray-800 hover:text-pink-600 transition-colors mb-1">
+          <h3 className="text-lg font-bold text-gray-800 hover:text-pink-600 transition-colors mb-1 truncate">
             {product.name}
           </h3>
         </Link>
@@ -78,9 +78,11 @@ const ProductCard = ({ product }) => {
 
         <div className="flex items-center justify-between pt-2 border-t border-gray-100 mt-auto">
           {/* Price */}
-          <span className="text-pink-600 font-bold text-sm">${parseFloat(product.price).toFixed(2)}</span>
+          <span className="text-pink-600 font-bold text-sm">
+            ${parseFloat(product.price).toFixed(2)}
+          </span>
 
-          {/* Add to Cart button */}
+          {/* Cart Button */}
           <button
             onClick={toggleCart}
             className={`flex items-center gap-1 px-3 py-2 rounded-lg font-semibold text-sm transition duration-300 focus:outline-none ${
@@ -108,11 +110,7 @@ const ProductCard = ({ product }) => {
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 Added
               </>

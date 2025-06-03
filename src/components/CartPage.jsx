@@ -64,7 +64,7 @@ const CartPage = () => {
               </h2>
               <p className="text-sm text-gray-500">{item.brand}</p>
               <p className="text-sm mt-1 text-pink-600 font-bold">
-                ${item.price.toFixed(2)} each
+                ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price} each
               </p>
             </div>
 

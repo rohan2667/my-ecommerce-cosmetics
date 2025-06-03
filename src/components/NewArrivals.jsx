@@ -1,7 +1,5 @@
-// src/components/BestSellers.jsx
 import React, { useState } from "react";
-import ProductCard from "../assets/ProductCard"; // ✅ Correct path
-
+import ProductCard from "../assets/ProductCard";
 const products = [
   {
     id: 1,

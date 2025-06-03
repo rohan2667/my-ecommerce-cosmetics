@@ -1,4 +1,3 @@
-// src/components/CategoryMenu.jsx
 import React from 'react';
 
 const categories = [

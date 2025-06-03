@@ -3,7 +3,7 @@ import ProductCard from "../assets/ProductCard";
 import ProductFilter from "../components/ProductFilter";
 import usePagination from "../components/usePagination";
 import { useCart } from "../components/CartContext";
-import Layout from "../components/Layout"; // Import Layout here
+import Layout from "../components/Layout"; 
 
 const productImages = [
   "/images/718mKhznbeL._SL1500_.jpg",
@@ -206,7 +206,7 @@ const ShopPage = () => {
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {currentData.map((product) => (
                   <ProductCard
                     key={product.id}

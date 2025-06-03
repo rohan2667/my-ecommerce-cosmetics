@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React from "react";
 import CategoryMenu from "../components/CategoryMenu";
 import TopBar from "../components/TopBar"; 
