@@ -11,7 +11,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(credentials.email); // simple login
+    login(credentials.email); 
     navigate('/');
   };
 

@@ -1,4 +1,3 @@
-// src/assets/products.js
 const productImages = [
   "/images/718mKhznbeL._SL1500_.jpg",
   "/images/makeup-cosmetics.webp",

@@ -4,7 +4,7 @@ import ProductDetail from "../components/ProductDetail";
 import RatingReviews from "../components/RatingReviews";
 import ProductCard from "../assets/ProductCard";
 import Layout from "../components/Layout";
-import { allProducts } from "../assets/products"; // 🔄 central product data
+import { allProducts } from "../assets/products"; 
 
 const ProductPage = () => {
   const { id } = useParams();

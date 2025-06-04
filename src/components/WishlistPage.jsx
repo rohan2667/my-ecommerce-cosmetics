@@ -1,4 +1,3 @@
-// src/pages/WishlistPage.jsx
 import React from "react";
 import { FaTrashAlt, FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../components/CartContext";

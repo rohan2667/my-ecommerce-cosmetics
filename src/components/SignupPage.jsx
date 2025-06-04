@@ -11,7 +11,7 @@ const SignupPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(form.email); // simulate user creation
+    login(form.email); 
     navigate('/');
   };
 

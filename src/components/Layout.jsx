@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
         <strong>🔥 50% OFF — Limited Time Only! Click Here 🔥</strong>
       </a>
 
-      {/* Push content below fixed banner */}
+
       <div className="pt-12">
         <Navbar />
         <main>{children}</main>

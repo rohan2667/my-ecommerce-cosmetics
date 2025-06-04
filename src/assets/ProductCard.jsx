@@ -5,7 +5,7 @@ import { useWishlist } from "../components/WishlistContext";
 import { FaShoppingCart } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
-  const { cart, addToCart, removeFromCart } = useCart(); // Using the original working logic
+  const { cart, addToCart, removeFromCart } = useCart(); 
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const [inCart, setInCart] = useState(false);
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
             alt={product.name}
             className="w-full h-52 object-cover rounded-t-xl transition-transform duration-500 group-hover:scale-105"
           />
-          {/* Optional Gradient Overlay */}
+         
           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-70 rounded-t-xl" />
         </Link>
 
