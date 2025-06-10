@@ -1,22 +1,64 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import Homepage from "./assets/homepage.jsx";
-import ShopPage from "./components/ShopPage.jsx";
-import ProductPage from "./components/ProductPage.jsx";
-import CartPage from "./components/CartPage.jsx";
-import WishlistPage from "./components/WishlistPage.jsx";
-import LoginPage from "./components/LoginPage.jsx";
-import SignupPage from "./components/SignupPage.jsx";
+import Homepage from "./pages/Homepage";
+import ShopPage from "./pages/ShopPage";
+import ProductPage from "./pages/ProductPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import WishlistPage from "./pages/WishlistPage";
 
-import { CartProvider } from "./components/CartContext.jsx";
-import { WishlistProvider } from "./components/WishlistContext.jsx";
-import { AuthProvider, useAuth } from "./components/AuthContext.jsx";
+import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
-// Protected Route Component
+import AuthModal from "./modal/AuthModal";
+
+// Protected Route Component for Wishlist only
 const PrivateRoute = ({ element }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? element : <Navigate to="/login" replace />;
+  const { isAuthenticated, isGuest } = useAuth();
+  return isAuthenticated || isGuest ? (
+    element
+  ) : (
+    <div className="flex items-center justify-center h-screen text-center text-xl text-pink-600">
+      You must be logged in to view this page.
+    </div>
+  );
+};
+
+// Checkout Route with modal for auth
+const CheckoutRoute = () => {
+  const { isAuthenticated, isGuest } = useAuth();
+  const navigate = useNavigate();
+  const [showAuthModal, setShowAuthModal] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isAuthenticated && !isGuest) {
+      setShowAuthModal(true);
+    }
+  }, [isAuthenticated, isGuest]);
+
+  const handleCloseModal = () => {
+    setShowAuthModal(false);
+    if (!isAuthenticated && !isGuest) {
+      navigate("/cart");
+    }
+  };
+
+  return (
+    <>
+      {!isAuthenticated && !isGuest && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={handleCloseModal}
+          showGuestOption={true}
+        />
+      )}
+      {(isAuthenticated || isGuest) && <CheckoutPage />}
+    </>
+  );
 };
 
 function App() {
@@ -30,14 +72,12 @@ function App() {
               <Route path="/" element={<Homepage />} />
               <Route path="/products" element={<ShopPage />} />
               <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/wishlist" element={<WishlistPage />} />
+              {/* Protected Checkout */}
+              <Route path="/checkout" element={<CheckoutRoute />} />
 
-              {/* Protected Routes */}
-              <Route path="/cart" element={<PrivateRoute element={<CartPage />} />} />
-              <Route path="/wishlist" element={<PrivateRoute element={<WishlistPage />} />} />
-
-              {/* 404 */}
+              {/* Catch-all */}
               <Route
                 path="*"
                 element={
@@ -47,6 +87,7 @@ function App() {
                 }
               />
             </Routes>
+            <ToastContainer position="top-right" autoClose={2000} />
           </BrowserRouter>
         </WishlistProvider>
       </CartProvider>

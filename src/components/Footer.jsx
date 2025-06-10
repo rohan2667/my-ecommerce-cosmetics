@@ -3,11 +3,10 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaPinterestP } from "re
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-pink-100 via-pink-50 to-pink-100 text-gray-700 mt-5">
-      <div className="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
-
+    <footer className="bg-gradient-to-r from-pink-100 via-pink-50 to-pink-100 text-gray-700 mt-5 ">
+      <div className="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-15">
         {/* About Section */}
-        <div>
+        <div className="mr-4">
           <h3 className="text-2xl font-bold text-pink-600 mb-4">Cosmetics</h3>
           <p className="text-sm leading-relaxed">
             Your destination for radiant beauty products crafted to nourish your skin and uplift your soul. Discover the magic in every bottle.
@@ -27,7 +26,7 @@ const Footer = () => {
         </div>
 
         {/* Quick Links */}
-        <div>
+        <div className="mx-auto">
           <h4 className="text-xl font-semibold text-pink-600 mb-4">Quick Links</h4>
           <ul className="space-y-2 text-sm">
             <li>
@@ -59,7 +58,7 @@ const Footer = () => {
         </div>
 
         {/* Customer Care */}
-        <div>
+        <div className="ml-4">
           <h4 className="text-xl font-semibold text-pink-600 mb-4">Customer Care</h4>
           <ul className="space-y-2 text-sm">
             <li>
@@ -91,7 +90,7 @@ const Footer = () => {
         </div>
 
         {/* Newsletter Signup */}
-        <div>
+        <div className="mx-auto">
           <h4 className="text-xl font-semibold text-pink-600 mb-4">Stay in Touch</h4>
           <p className="text-sm mb-4">
             Subscribe to get the latest updates on new products, sales & more.
@@ -114,6 +113,7 @@ const Footer = () => {
             </button>
           </form>
         </div>
+        
       </div>
 
       {/* Bottom Bar */}

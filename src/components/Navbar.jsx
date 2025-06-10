@@ -1,10 +1,10 @@
 import React from "react";
-import CategoryMenu from "../components/CategoryMenu";
-import TopBar from "../components/TopBar"; 
+import CategoryMenu from "./CategoryMenu";
+import TopBar from "./TopBar"; 
 
 const Navbar = () => {
   return (
-    <div className="w-full bg-white shadow-md z-50">
+    <div className="">
       <TopBar />      
       <CategoryMenu /> 
     </div>

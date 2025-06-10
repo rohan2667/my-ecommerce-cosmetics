@@ -4,7 +4,7 @@ import NewArrivals from '../components/NewArrivals';
 import DealsOfTheDay from '../components/DealsOfTheDay';
 import BestSellers from '../components/BestSellers';
 import BrandListing from '../components/BrandListing';
-import Layout from '../components/Layout';
+import Layout from '../layouts/Layout';
 
 const Homepage = () => {
   return (

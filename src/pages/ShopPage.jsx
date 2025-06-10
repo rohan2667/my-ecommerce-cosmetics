@@ -1,120 +1,12 @@
 import React, { useState } from "react";
-import ProductCard from "../assets/ProductCard";
+import ProductCard from "../components/ProductCard";
 import ProductFilter from "../components/ProductFilter";
 import usePagination from "../components/usePagination";
-import { useCart } from "../components/CartContext";
-import Layout from "../components/Layout"; 
+import { useCart } from "../contexts/CartContext";
+import Layout from "../layouts/Layout"; 
 
-const productImages = [
-  "/images/718mKhznbeL._SL1500_.jpg",
-  "/images/makeup-cosmetics.webp",
-  "/images/2822953.webp",
-  "/images/fenty-beauty9929.logowik.com.webp",
-  "/images/summer-makeup-must-haves-768x512.jpg",
-  "/images/Rare_beauty.webp.png",
-];
-
-const baseProducts = [
-  {
-    name: "Hydrating Face Cream",
-    brand: "GlowCo",
-    category: "Skincare",
-    price: 25.99,
-    color: "White",
-    size: "50ml",
-    skinType: "Dry",
-  },
-  {
-    name: "Matte Lipstick",
-    brand: "LuxeBeauty",
-    category: "Makeup",
-    price: 15.99,
-    color: "Red",
-    size: "5g",
-    skinType: "All",
-  },
-  {
-    name: "Aloe Vera Gel",
-    brand: "NatureCare",
-    category: "Skincare",
-    price: 12.49,
-    color: "Green",
-    size: "100ml",
-    skinType: "Sensitive",
-  },
-  {
-    name: "Nude Eyeshadow Palette",
-    brand: "LuxeBeauty",
-    category: "Makeup",
-    price: 29.99,
-    color: "Nude",
-    size: "10 Shades",
-    skinType: "All",
-  },
-  {
-    name: "Vitamin C Serum",
-    brand: "GlowCo",
-    category: "Skincare",
-    price: 34.99,
-    color: "Orange",
-    size: "30ml",
-    skinType: "All",
-  },
-  {
-    name: "Waterproof Mascara",
-    brand: "LuxeBeauty",
-    category: "Makeup",
-    price: 18.49,
-    color: "Black",
-    size: "10ml",
-    skinType: "All",
-  },
-  {
-    name: "Soothing Toner",
-    brand: "NatureCare",
-    category: "Skincare",
-    price: 19.99,
-    color: "Blue",
-    size: "100ml",
-    skinType: "Sensitive",
-  },
-  {
-    name: "Blush Palette",
-    brand: "LuxeBeauty",
-    category: "Makeup",
-    price: 22.99,
-    color: "Pink",
-    size: "5 Shades",
-    skinType: "All",
-  },
-  {
-    name: "Luxury Facial Oil",
-    brand: "GlowCo",
-    category: "Skincare",
-    price: 45.0,
-    color: "Golden",
-    size: "25ml",
-    skinType: "Dry",
-  },
-  {
-    name: "Velvet Lip Gloss",
-    brand: "RareBeauty",
-    category: "Makeup",
-    price: 16.99,
-    color: "Rose",
-    size: "7ml",
-    skinType: "All",
-  },
-];
-
-const allProducts = Array.from({ length: 20 }, (_, i) => {
-  const base = baseProducts[i % baseProducts.length];
-  return {
-    ...base,
-    id: i + 1,
-    image: productImages[i % productImages.length],
-  };
-});
+// Importing product data from product.js
+import { allProducts } from "../assets/products";
 
 const ShopPage = () => {
   const [filters, setFilters] = useState({
@@ -255,3 +147,4 @@ const ShopPage = () => {
 };
 
 export default ShopPage;
+

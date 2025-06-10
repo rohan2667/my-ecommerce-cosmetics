@@ -24,8 +24,8 @@ const ProductFilter = ({ filters, handleFilterChange }) => (
           className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:ring-pink-500 focus:border-pink-500"
         >
           <option value="">All</option>
-          {[...new Set(filters.options[key])].map((opt) => (
-            <option key={opt} value={opt}>
+          {[...new Set(filters.options[key])].map((opt, index) => (
+            <option key={`${opt}-${index}`} value={opt}>
               {opt}
             </option>
           ))}

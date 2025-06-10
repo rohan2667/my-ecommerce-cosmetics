@@ -1,69 +1,12 @@
 import React, { useState } from "react";
-import ProductCard from "../assets/ProductCard";
-const products = [
-  {
-    id: 1,
-    name: "Rare Beauty Blush",
-    image: "/images/718mKhznbeL._SL1500_.jpg",
-    price: "28.00",
-    description: "Soft pinch liquid blush – glow from within.",
-  },
-  {
-    id: 2,
-    name: "Fenty Beauty Gloss",
-    image: "/images/makeup-cosmetics.webp",
-    price: "22.00",
-    description: "Gloss Bomb – ultra shine lip luminizer.",
-  },
-  {
-    id: 3,
-    name: "Zara Perfume",
-    image: "/images/Professional-Hair-Brands-And-Top-Products-Curated-By-Nykaa-Editors-For-A-Salon-Like-Finish-At-Home_OI.jpg",
-    price: "35.00",
-    description: "Elevate your scent game – timeless aroma.",
-  },
-  {
-    id: 4,
-    name: "Sugar Lipstick Set",
-    image: "/images/summer-makeup-must-haves-768x512.jpg",
-    price: "18.00",
-    description: "Matte as hell – 3 mini liquid lipsticks.",
-  },
-  {
-    id: 5,
-    name: "Nykaa Foundation",
-    image: "/images/718mKhznbeL._SL1500_.jpg",
-    price: "25.00",
-    description: "SkinShield anti-pollution foundation.",
-  },
-  {
-    id: 6,
-    name: "Maybelline Mascara",
-    image: "/images/makeup-cosmetics.webp",
-    price: "12.00",
-    description: "Colossal Volume Express – blackest black.",
-  },
-  {
-    id: 7,
-    name: "The Ordinary Serum",
-    image: "/images/Professional-Hair-Brands-And-Top-Products-Curated-By-Nykaa-Editors-For-A-Salon-Like-Finish-At-Home_OI.jpg",
-    price: "10.00",
-    description: "Niacinamide 10% + Zinc 1% – clear skin hero.",
-  },
-  {
-    id: 8,
-    name: "L’Oreal Hair Spa",
-    image: "/images/summer-makeup-must-haves-768x512.jpg",
-    price: "20.00",
-    description: "Salon-like treatment for silky smooth hair.",
-  },
-];
+import ProductCard from "./ProductCard";
+import { allProducts } from "../assets/products";
 
 const PRODUCTS_PER_PAGE = 4;
 
 const NewArrivals = () => {
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+  const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
 
   const handlePrev = () => {
     setPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
@@ -73,7 +16,7 @@ const NewArrivals = () => {
     setPage((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
   };
 
-  const currentProducts = products.slice(
+  const currentProducts = allProducts.slice(
     page * PRODUCTS_PER_PAGE,
     page * PRODUCTS_PER_PAGE + PRODUCTS_PER_PAGE
   );
