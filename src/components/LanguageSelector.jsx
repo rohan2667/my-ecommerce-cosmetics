@@ -1,93 +1,38 @@
 import React from "react";
-import Select from "react-select";
 import Flag from "react-world-flags";
 
-const LANGUAGES = [
-  { code: "US", label: "English", value: "en" },
-  { code: "ES", label: "Spanish", value: "es" },
-  { code: "FR", label: "French", value: "fr" },
-];
-
-const LanguageOption = (props) => {
-  const { data, innerRef, innerProps, isFocused, isSelected } = props;
-  return (
-    <div
-      ref={innerRef}
-      {...innerProps}
-      className={`flex items-center p-2 cursor-pointer ${
-        isFocused ? "bg-pink-100" : ""
-      } ${isSelected ? "bg-pink-200 font-bold" : ""}`}
-      style={{ minHeight: 36 }}
-    >
-      <Flag
-        code={data.code}
-        style={{ width: 24, height: 16, borderRadius: 2, marginRight: 8 }}
-      />
-      <span>{data.label}</span>
-    </div>
-  );
-};
-
-const SingleValue = ({ data }) => (
-  <div className="flex items-center" style={{ minHeight: 36 }}>
-    <Flag
-      code={data.code}
-      style={{ width: 24, height: 16, borderRadius: 2, marginRight: 8 }}
-    />
-    <span>{data.label}</span>
-  </div>
-);
-
 const LanguageSelector = ({ selectedLang, setSelectedLang }) => {
+  const languages = [
+    { code: "US", label: "English", value: "en", short: "EN" },
+    { code: "FR", label: "Français", value: "fr", short: "FR" },
+    { code: "ES", label: "Español", value: "es", short: "ES" },
+    { code: "DE", label: "Deutsch", value: "de", short: "DE" },
+    { code: "JP", label: "日本語", value: "jp", short: "JP" },
+  ];
+
+  const handleChange = (e) => {
+    const newLang = languages.find((lang) => lang.value === e.target.value);
+    setSelectedLang(newLang);
+  };
+
   return (
-    <Select
-      options={LANGUAGES}
-      value={selectedLang}
-      onChange={setSelectedLang}
-      isSearchable={false}
-      components={{ Option: LanguageOption, SingleValue }}
-      menuPortalTarget={typeof window !== "undefined" ? document.body : null}
-      styles={{
-        control: (base) => ({
-          ...base,
-          minHeight: 36,
-          height: 36,
-          fontSize: "0.875rem",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 8px",
-          zIndex: 100,
-          cursor: "pointer",
-        }),
-        input: (base) => ({
-          ...base,
-          visibility: "hidden", 
-          height: 0,
-          padding: 0,
-          margin: 0,
-        }),
-        valueContainer: (base) => ({
-          ...base,
-          height: 36,
-          padding: "0",
-          display: "flex",
-          alignItems: "center",
-        }),
-        singleValue: (base) => ({
-          ...base,
-          display: "flex",
-          alignItems: "center",
-        }),
-        indicatorsContainer: (base) => ({
-          ...base,
-          height: 36,
-        }),
-        menuPortal: (base) => ({
-          ...base,
-          zIndex: 9999,
-        }),
-      }}
-    />
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      <Flag
+        code={selectedLang.code}
+        style={{ width: 20, height: 14, verticalAlign: "middle" }}
+      />
+      <select
+        value={selectedLang.value}
+        onChange={handleChange}
+        className="text-sm w-16 px-2 py-1 border border-gray-300 rounded-md bg-white shadow-sm hover:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400 transition-all duration-150 cursor-pointer"
+      >
+        {languages.map((lang) => (
+          <option key={lang.value} value={lang.value}>
+            {lang.short}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };
 

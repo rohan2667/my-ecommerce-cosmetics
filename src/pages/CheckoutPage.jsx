@@ -12,7 +12,8 @@ const CheckoutPage = () => {
   } = useCart();
 
   const [address, setAddress] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
     address1: "",
     address2: "",
     city: "",
@@ -67,12 +68,22 @@ const CheckoutPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-6 py-5 bg-gradient-to-b from-pink-50 to-white min-h-screen">
-        <h1 className="text-4xl font-extrabold text-center text-pink-700 mb-8 drop-shadow-md">
-          Checkout
-        </h1>
+      <div className="relative w-full h-[250px] mb-10 shadow-lg overflow-hidden">
+        <img
+          src="images/testimonial-1-bg.jpg"
+          alt="Cart Banner"
+          className="w-full h-full object-cover brightness-75"
+        />
+        <div className="absolute inset-0 flex flex-col justify-center items-center mt-5">
+          <h1 className="text-6xl font-bold text-center tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">
+            Complete Your Beauty Order
+          </h1>
+          <p className="text-lg animate-pulse tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">Secure. Fast. Beautifully yours.</p>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-6 py-4 bg-gradient-to-b from-pink-50 to-white min-h-screen">
 
-        <div className="flex gap-12 justify-center">
+        <div className="flex gap-12 justify-center font-secondary">
           {/* Left Column */}
           <div className="space-y-10">
             {/* Shipping Address */}
@@ -83,7 +94,7 @@ const CheckoutPage = () => {
               <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <input
                   type="text"
-                  name="name"
+                  name="firstname"
                   placeholder="First Name"
                   value={address.firstname}
                   onChange={handleInputChange}
@@ -91,7 +102,7 @@ const CheckoutPage = () => {
                 />
                 <input
                   type="text"
-                  name="name"
+                  name="lastname"
                   placeholder="Last Name"
                   value={address.lastname}
                   onChange={handleInputChange}
@@ -145,7 +156,6 @@ const CheckoutPage = () => {
                   onChange={handleInputChange}
                   className="border border-pink-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pink-500 outline-none transition"
                 />
-                
               </form>
             </section>
 
@@ -217,83 +227,93 @@ const CheckoutPage = () => {
           </div>
 
           {/* Right Column - Order Summary */}
-          <div className="h-220 bg-white p-8 rounded-3xl shadow-2xl border-3 border-pink-200 space-y-6">
-            <h2 className="text-2xl font-extrabold text-pink-700 border-b border-pink-200 pb-2">
+          <div className="sticky top-6 h-fit bg-white p-8 rounded-3xl shadow-2xl border-3 border-pink-200 space-y-3">
+            <h2 className="text-2xl font-semibold text-pink-700 border-b border-pink-200 pb-1">
               Order Summary
             </h2>
 
-            <div className="h-92 overflow-y-auto bg-pink-50 p-5 rounded-xl border border-pink-300 space-y-5">
+            <div className="h-50 overflow-y-auto bg-pink-50 p-3 rounded-xl border border-pink-300 space-y-2">
               {cart.length === 0 && (
                 <p className="text-center text-pink-400 italic">Your cart is empty</p>
               )}
-              {cart.map((item, index) => (
-                <div
-                  key={`${item.id}-${index}`}
-                  className="flex justify-between items-start gap-6 border-b border-pink-200 pb-4 last:border-b-0"
-                >
-                  <div className="flex gap-4 items-start">
-                    <img
-                      src={item.image || "https://via.placeholder.com/50"}
-                      alt={item.name}
-                      className="w-16 h-16 object-cover rounded-lg shadow"
-                    />
-                    <div className="text-sm">
-                      <div className="font-semibold text-pink-700">{item.name}</div>
-                      {item.selectedColor && (
-                        <div className="text-pink-500 text-xs">Color: {item.selectedColor.name}</div>
-                      )}
-                      {item.selectedSize && (
-                        <div className="text-pink-500 text-xs">Size: {item.selectedSize}</div>
-                      )}
-                      <div className="flex items-center gap-2 mt-1">
-                        <button
-                          onClick={() => updateQuantity(item, item.quantity - 1)}
-                          className="px-2 py-1 bg-pink-200 text-pink-700 rounded font-bold hover:bg-pink-300"
-                        >
-                          −
-                        </button>
-                        <span className="text-pink-700 font-medium">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item, item.quantity + 1)}
-                          className="px-2 py-1 bg-pink-200 text-pink-700 rounded font-bold hover:bg-pink-300"
-                        >
-                          +
-                        </button>
+              {cart.map((item, index) => {
+                const selectedImage = item.variants?.find(
+                  (v) => v.color.name === item.selectedColor?.name
+                )?.image;
+
+                return (
+                  <div
+                    key={`${item.id}-${index}`}
+                    className="flex justify-between items-start gap-6 border-b border-pink-200 pb-2 "
+                  >
+                    <div className="flex items-start">
+                      <img
+                        src={selectedImage || "/fallback-image.jpg"}
+                        alt={item.selectedColor?.name || "Product"}
+                        className="w-20 h-20 object-cover rounded-lg"
+                      />
+                      <div className="flex flex-col flex-grow">
+                        <h3 className="font-semibold font-display text-lg">{item.name}</h3>
+                        {item.selectedColor && (
+                          <p className="text-sm text-gray-600">
+                            Color: <span className="font-sm">{item.selectedColor.name}</span>
+                          </p>
+                        )}
+                        {item.selectedSize && (
+                          <p className="text-sm text-gray-600">
+                            Size: <span className="font-medium">{item.selectedSize}</span>
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1">
+                          <button
+                            onClick={() => updateQuantity(item, item.quantity - 1)}
+                            className="px-2 bg-pink-200 text-pink-700 rounded font-bold hover:bg-pink-300"
+                          >
+                            −
+                          </button>
+                          <span className="text-pink-700 font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item, item.quantity + 1)}
+                            className="px-2 bg-pink-200 text-pink-700 rounded font-bold hover:bg-pink-300"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col items-end space-y-2">
-                    <div className="font-bold text-pink-700">
-                      ${(item.price * item.quantity).toFixed(2)}
+                    <div className="flex flex-col items-end space-y-2">
+                      <div className="font-sm text-pink-700">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(item)}
+                        aria-label={`Remove ${item.name}`}
+                        className="text-pink-400 hover:text-pink-700 transition"
+                      >
+                        <FaTrashAlt size={20} />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => removeFromCart(item)}
-                      aria-label={`Remove ${item.name}`}
-                      className="text-pink-600 hover:text-pink-800 transition"
-                    >
-                      <FaTrashAlt size={20} />
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Voucher Input */}
-            <div className="bg-pink-100 border border-pink-300 rounded-xl p-3 space-y-2">
-              <h3 className="text-lg font-bold text-pink-700">Have a Voucher?</h3>
+            <div className="bg-pink-100 border border-pink-300 rounded-xl p-1">
+              <h3 className="px-2 py-1 text-sm font-bold text-pink-700">Have a Voucher?</h3>
               {!voucherApplied ? (
-                <div className="flex items-center space-x-3">
+                <div className="flex px-2 pb-1 items-center space-x-2">
                   <input
                     type="text"
                     placeholder="Enter code"
                     value={voucherCode}
                     onChange={(e) => setVoucherCode(e.target.value)}
-                    className="flex-grow p-3 border border-pink-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 transition"
+                    className="flex-grow p-1 border border-pink-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600 transition"
                   />
                   <button
                     onClick={handleApplyVoucher}
                     disabled={!voucherCode.trim()}
-                    className={`px-5 py-3 text-white font-semibold rounded-lg transition ${
+                    className={`px-5 py-1 text-white font-semibold rounded-lg transition ${
                       voucherCode.trim()
                         ? "bg-pink-600 hover:bg-pink-700"
                         : "bg-pink-300 cursor-not-allowed"
@@ -303,37 +323,39 @@ const CheckoutPage = () => {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center justify-between bg-white p-3 rounded-lg border border-pink-300 shadow-sm">
-                  <span className="text-green-700 font-semibold">
-                    Voucher "{VOUCHER_CODE}" applied!
-                  </span>
-                  <button
-                    onClick={handleRemoveVoucher}
-                    className="text-sm text-red-600 hover:underline"
-                  >
-                    Remove
-                  </button>
+                <div className="px-2">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 mb-1 space-x-2 pb-1 rounded-lg border border-pink-300 shadow-sm">
+                    <span className="text-medium text-green-700 font-semibold">
+                      Voucher "{VOUCHER_CODE}" applied!
+                    </span>
+                    <button
+                      onClick={handleRemoveVoucher}
+                      className="text-medium text-red-600 hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Totals */}
-            <div className="space-y-1 border-t border-pink-200 pt-3">
-              <div className="flex justify-between text-lg font-medium text-pink-700">
+            <div className="space-y-1 border-t border-pink-200 pt-1">
+              <div className="flex justify-between text-medium font-medium text-pink-700">
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-lg font-medium text-pink-700">
+              <div className="flex justify-between text-medium font-medium text-pink-700">
                 <span>Shipping</span>
                 <span>${shippingCost.toFixed(2)}</span>
               </div>
               {voucherApplied && (
-                <div className="flex justify-between text-lg font-medium text-green-700">
+                <div className="flex justify-between text-medium font-medium text-green-700">
                   <span>Discount</span>
                   <span>- ${discount.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between border-t text-2xl font-bold text-pink-700 pt-2">
+              <div className="flex justify-between border-t text-xl font-bold text-pink-700">
                 <span>Total</span>
                 <span>${total.toFixed(2)}</span>
               </div>
@@ -344,10 +366,10 @@ const CheckoutPage = () => {
               <button
                 onClick={handlePlaceOrder}
                 disabled={cart.length === 0}
-                className={`px-3 py-2 text-lg font-bold text-white rounded-xl transition ${
+                className={`px-3 py-2 text-sm font-secondary font-bold rounded-xl transition ${
                   cart.length === 0
                     ? "bg-pink-300 cursor-not-allowed"
-                    : "bg-pink-600 hover:bg-pink-700"
+                    : "rounded-full text-medium border border-pink-600 text-pink-600 hover:bg-pink-700 hover:text-white transition transform hover:-translate-y-1 active:scale-95 "
                 }`}
               >
                 Place Order

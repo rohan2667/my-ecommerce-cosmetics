@@ -23,7 +23,7 @@ const AuthModal = ({ isOpen, onClose, showGuestOption = false }) => {
   };
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-60">
       <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6">
         <h2 className="text-2xl font-bold mb-4 text-center text-pink-600">
           {isLogin ? "Login" : "Sign Up"}
@@ -46,7 +46,7 @@ const AuthModal = ({ isOpen, onClose, showGuestOption = false }) => {
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className="w-full px-4 py-2 font-semibold border rounded"
             required
           />
           <input
@@ -55,12 +55,12 @@ const AuthModal = ({ isOpen, onClose, showGuestOption = false }) => {
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
+            className="w-full px-4 py-2 font-semibold border rounded"
             required
           />
           <button
             type="submit"
-            className="w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-600"
+            className="w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-600 text-"
           >
             {isLogin ? "Login" : "Sign Up"}
           </button>

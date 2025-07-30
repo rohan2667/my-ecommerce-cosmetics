@@ -76,7 +76,20 @@ const ShopPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-6 py-8 flex gap-8 min-h-[80vh]">
+      <div className="relative w-full h-[250px] mb-10 shadow-lg overflow-hidden">
+        <img
+          src="images/newsletter_1.jpeg"
+          alt="Cart Banner"
+          className="w-full h-full object-cover brightness-75"
+        />
+        <div className="absolute inset-0 flex flex-col ml-130 mt-15">
+          <h1 className="text-6xl font-bold text-center tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">
+            Explore Our Products
+          </h1>
+          <p className="text-lg ml-65 animate-pulse tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">Discover beauty in every detail.</p>
+        </div>
+        </div>
+      <div className="max-w-7xl mx-auto px-6 py-5 flex gap-8 min-h-[80vh]">
         <aside className="w-64 sticky top-20 self-start bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-6 border-b pb-2 text-pink-600">
             Filters
@@ -88,9 +101,6 @@ const ShopPage = () => {
         </aside>
 
         <main className="flex-1">
-          <h1 className="text-3xl font-extrabold mb-8 text-gray-900">
-            Explore Our Products
-          </h1>
 
           {filtered.length === 0 ? (
             <p className="text-center text-gray-500 mt-20 text-lg font-medium">

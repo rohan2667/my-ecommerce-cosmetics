@@ -68,9 +68,11 @@ const DealsOfTheDay = () => {
         {/* Animated Gradient Heading */}
         <h2
           className="
-            text-4xl
+            text-5xl
             font-extrabold
+            font-display
             text-center
+            mt-10
             mb-6
             bg-gradient-to-r
             from-violet-500
@@ -95,12 +97,12 @@ const DealsOfTheDay = () => {
             <span className="font-bold">{timeLeft.hours}</span>:
             <span className="font-bold">{timeLeft.minutes}</span>:
             <span className="font-bold">{timeLeft.seconds}</span>
-            <span className="text-sm uppercase ml-2 text-pink-400">left only!</span>
+            <span className="text-sm font-secondary uppercase ml-2 text-pink-400">left only!</span>
           </div>
         </div>
 
         {/* Product Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
           {deals.map((item, index) => {
             const discount = calculateDiscount(item.originalPrice, item.dealPrice);
             return (
@@ -115,28 +117,28 @@ const DealsOfTheDay = () => {
                     alt={item.name}
                     className="w-full h-56 object-cover"
                   />
-                  <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                  <span className="absolute top-0 left-0 bg-rose-600 text-white font-band text-sm font-light px-3 py-1 shadow rounded-br-full">
                     -{discount}% OFF
                   </span>
                 </div>
 
                 {/* Content */}
                 <div className="p-5 flex flex-col flex-grow">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-1">
+                  <h3 className="text-xl font-display font-semibold text-gray-800 mb-1">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-4">{item.description}</p>
+                  <p className="text-sm font-secondary text-gray-500 mb-4">{item.description}</p>
 
                   {/* Price & Buy Button */}
                   <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
-                    <div className="text-xl text-pink-600 font-bold">
+                    <div className="text-lg font-secondary text-pink-600 font-bold">
                       ${item.dealPrice.toFixed(2)}
                       <span className="text-sm text-gray-400 ml-2 line-through">
                         ${item.originalPrice.toFixed(2)}
                       </span>
                     </div>
 
-                    <button className="bg-pink-500 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-pink-600 transition">
+                    <button className="bg-[#f67b94] text-white text-sm font-secondary font-semibold px-4 py-2 rounded-full hover:bg-pink-600 transition">
                       Buy Now
                     </button>
                   </div>

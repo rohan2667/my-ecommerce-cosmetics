@@ -9,6 +9,9 @@ import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import WishlistPage from "./pages/WishlistPage";
+import AccountPage from "./pages/AccountPage";
+import SalesOffersPage from "./pages/SalesOffersPage";
+import SearchPage from "./pages/SearchPage";
 
 import { CartProvider } from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
@@ -74,8 +77,12 @@ function App() {
               <Route path="/product/:id" element={<ProductPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/account" element={<AccountPage />} />
               {/* Protected Checkout */}
               <Route path="/checkout" element={<CheckoutRoute />} />
+              <Route path="/sales-offers" element={<SalesOffersPage />} />
+              <Route path="/search" element={<SearchPage />} />
+
 
               {/* Catch-all */}
               <Route

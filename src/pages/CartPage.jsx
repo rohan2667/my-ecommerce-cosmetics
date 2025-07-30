@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 import { FaTrashAlt, FaPlusCircle, FaMinusCircle } from "react-icons/fa";
 import Layout from "../layouts/Layout";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuth } from "../contexts/AuthContext";
 import AuthModal from "../modal/AuthModal";
+import { Link } from "react-router-dom";
 
 const CartPage = () => {
   const { cart, removeFromCart, addToCart, decrementFromCart } = useCart();
@@ -17,9 +19,6 @@ const CartPage = () => {
     cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleCheckout = () => {
-    console.log("handleCheckout triggered");
-    console.log("Authenticated:", isAuthenticated, "Guest:", isGuest);
-
     if (!isAuthenticated && !isGuest) {
       setShowAuthModal(true);
     } else {
@@ -30,9 +29,22 @@ const CartPage = () => {
   if (cart.length === 0) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center h-[70vh] text-gray-400">
+        <div className="relative w-full h-[250px] mb-10 shadow-lg overflow-hidden">
+        <img
+          src="images/hero_bg_1.jpeg"
+          alt="Cart Banner"
+          className="w-full h-full object-cover brightness-75"
+        />
+        <div className="absolute inset-0 flex flex-col items-end mr-40 mt-13 ">
+          <h1 className="text-7xl font-bold text-center tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">
+            Your Cart
+          </h1>
+          <p className="text-lg -mr-12 animate-pulse tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">Start shopping! Your next favorite thing is waiting.</p>
+        </div>
+      </div>
+        <div className="flex flex-col  items-center justify-center h-[70vh] text-gray-400 font-secondary">
           <svg
-            className="w-20 h-20 mb-4 text-pink-300"
+            className="w-20 h-20 mb-10 text-pink-300"
             fill="none"
             stroke="currentColor"
             strokeWidth={1.5}
@@ -45,12 +57,12 @@ const CartPage = () => {
             />
           </svg>
           <p className="text-xl font-semibold">Your cart is empty 🛒</p>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-6 text-sm text-gray-500">
             Looks like you haven't added any products yet.
           </p>
           <button
             onClick={() => navigate("/")}
-            className="mt-4 px-2 py-1.5 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition"
+            className="mt-10 px-5 py-1.5 rounded-full text-medium border border-pink-600 text-pink-600 hover:bg-pink-700 hover:text-white transition transform hover:-translate-y-1 active:scale-95 font-display font-bold tracking-widest"
           >
             Go Shopping
           </button>
@@ -61,84 +73,107 @@ const CartPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto p-4">
-        <h2 className="text-4xl font-extrabold text-pink-600 mb-4">Your Cart</h2>
+     <div className="relative w-full h-[250px] mb-10 shadow-lg overflow-hidden">
+        <img
+          src="images/hero_bg_1.jpeg"
+          alt="Cart Banner"
+          className="w-full h-full object-cover brightness-75"
+        />
+        <div className="absolute inset-0 flex flex-col items-end mr-40 mt-13 ">
+          <h1 className="text-7xl font-bold text-center tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">
+            Your Cart
+          </h1>
+          <p className="text-lg -mr-7 animate-pulse tracking-widest font-display text-white drop-shadow-lg px-4 py-2 rounded">Ready to check out? Your favorites are waiting!</p>
+        </div>
+      </div>
+      <div className="mx-auto mt-10 font-secondary flex flex-col items-center justify-center">
+      <div className="w-200 h-100 overflow-y-auto bg-pink-50 p-3 rounded-xl border border-pink-300 space-y-2">
+        
         <ul className="divide-y divide-gray-200">
-          {cart.map((item) => (
-            <li
-              key={`${item.id}-${item.selectedColor?.name ?? ""}-${
-                item.selectedSize ?? ""
-              }`}
-              className="py-4 flex items-center gap-4"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-20 h-20 object-cover rounded-lg"
-              />
-              <div className="flex flex-col flex-grow">
-                <h3 className="font-semibold text-lg">{item.name}</h3>
-                {item.selectedColor && (
-                  <p className="text-sm text-gray-600">
-                    Color: <span className="font-medium">{item.selectedColor.name}</span>
-                  </p>
-                )}
-                {item.selectedSize && (
-                  <p className="text-sm text-gray-600">
-                    Size: <span className="font-medium">{item.selectedSize}</span>
-                  </p>
-                )}
-                <p className="text-pink-600 font-semibold mt-1">${item.price.toFixed(2)}</p>
-              </div>
+          {cart.map((item) => {
+            const selectedImage = item.variants?.find(
+              (v) => v.color.name === item.selectedColor?.name
+            )?.image;
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    decrementFromCart(item);
-                  }}
-                  disabled={item.quantity <= 1}
-                  aria-label="Decrease quantity"
-                  className="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50"
-                >
-                  <FaMinusCircle size={20} />
-                </button>
+            return (
 
-                <span className="font-semibold">{item.quantity}</span>
+              <li
+                key={`${item.id}-${item.selectedColor?.name ?? ""}-${item.selectedSize ?? ""}`}
+                className="py-4 flex items-center"
+              >
+                <img
+                  src={selectedImage || "/fallback-image.jpg"}
+                  alt={item.selectedColor?.name || "Product"}
+                  className="w-20 h-20 object-cover rounded-lg"
+                />
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart(item, 1);
-                  }}
-                  aria-label="Increase quantity"
-                  className="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300"
-                >
-                  <FaPlusCircle size={20} />
-                </button>
+                
+                <div className="flex flex-col flex-grow mr-50">
+                  <h3 className="font-semibold text-xl font-display">{item.name}</h3>
+                  {item.selectedColor && (
+                    <p className="text-sm text-gray-600 font-secondary">
+                      Color: <span className="font-medium">{item.selectedColor.name}</span>
+                    </p>
+                  )}
+                  {item.selectedSize && (
+                    <p className="text-sm text-gray-600 font-secondary">
+                      Size: <span className="font-medium">{item.selectedSize}</span>
+                    </p>
+                  )}
+                  <p className="text-pink-600 font-semibold text-medium mt-1 font-secondary">${item.price.toFixed(2)}</p>
+                </div>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeFromCart(item);
-                  }}
-                  aria-label="Remove item"
-                  className="p-1 rounded-full bg-red-600 text-white hover:bg-red-700"
-                >
-                  <FaTrashAlt size={20} />
-                </button>
-              </div>
-            </li>
-          ))}
+                <div className="flex items-center gap-2 font-secondary">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      decrementFromCart(item);
+                    }}
+                    disabled={item.quantity <= 1}
+                    aria-label="Decrease quantity"
+                    className="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50"
+                  >
+                    <FaMinusCircle size={20} />
+                  </button>
+
+                  <span className="font-semibold">{item.quantity}</span>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(item, 1);
+                    }}
+                    aria-label="Increase quantity"
+                    className="p-1 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300"
+                  >
+                    <FaPlusCircle size={20} />
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFromCart(item);
+                    }}
+                    aria-label="Remove item"
+                    className="p-1 rounded-full bg-red-600 text-white hover:bg-red-700"
+                  >
+                    <FaTrashAlt size={20} />
+                  </button>
+                </div>
+              </li>
+              
+            );
+          })}
         </ul>
+        </div>
 
-        <div className="mt-6 flex justify-between items-center border-t pt-4">
-          <span className="text-2xl font-semibold">
+        <div className="mt-6 flex justify-between items-center border-t pt-4 gap-125">
+          <span className="text-xl font-semibold font-secondary">
             Total: ${getTotalPrice().toFixed(2)}
           </span>
           <button
             onClick={handleCheckout}
-            className="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition"
+            className="rounded-full text-medium border border-pink-600 text-pink-600 hover:bg-pink-700 hover:text-white transition transform hover:-translate-y-1 active:scale-95 font-secondary font-bold text-sm px-4 py-2"
           >
             Proceed to Checkout
           </button>

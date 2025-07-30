@@ -14,6 +14,15 @@ const ProductCard = ({ product }) => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
 
+  // Find selected variant by color or default to first variant
+  const selectedVariant =
+    product.variants?.find(
+      (variant) => variant.color.name === selectedColor?.name
+    ) || product.variants?.[0];
+
+  // Image source to show - fallback to product.image if no variants
+  const imageSrc = selectedVariant ? selectedVariant.image : product.image || "";
+
   useEffect(() => {
     const cartItem = cart.find(
       (item) =>
@@ -47,7 +56,7 @@ const ProductCard = ({ product }) => {
       alert("Please select a color before adding to cart.");
       return;
     }
-    if (!needsColor && !selectedSize) {
+    if (!needsColor && product.sizes && product.sizes.length > 0 && !selectedSize) {
       alert("Please select a size before adding to cart.");
       return;
     }
@@ -94,19 +103,19 @@ const ProductCard = ({ product }) => {
 
   const renderColorPalette = () => (
     <div className="flex gap-3 mt-2 flex-wrap">
-      {product.colors?.map((color, idx) => {
-        const isSelected = selectedColor?.name === color.name;
+      {product.variants?.map((variant, idx) => {
+        const isSelected = selectedColor?.name === variant.color.name;
         return (
           <button
             key={idx}
-            title={color.name}
-            onClick={() => toggleColor(color)}
+            title={variant.color.name}
+            onClick={() => toggleColor(variant.color)}
             className={`w-7 h-7 rounded-full border-2 transition-all focus:outline-none ${
               isSelected
                 ? "border-pink-500 ring-2 ring-pink-400"
                 : "border-gray-300 hover:ring-2 hover:ring-pink-300"
             }`}
-            style={{ backgroundColor: color.code }}
+            style={{ backgroundColor: variant.color.code }}
             aria-pressed={isSelected}
           />
         );
@@ -141,9 +150,9 @@ const ProductCard = ({ product }) => {
       <div className="relative group">
         <Link to={`/product/${product.id}`}>
           <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-52 object-cover rounded-t-xl transition-transform duration-500 group-hover:scale-105"
+            src={imageSrc}
+            alt={`${product.name} - ${selectedVariant?.color?.name || "Product Image"}`}
+            className="w-full h-52 rounded-t-xl transition-transform duration-500 group-hover:scale-105"
           />
         </Link>
 
@@ -173,21 +182,20 @@ const ProductCard = ({ product }) => {
 
       <div className="p-4 flex flex-col flex-grow">
         <Link to={`/product/${product.id}`}>
-          <h3 className="text-lg font-bold text-gray-800 hover:text-pink-600 transition-colors mb-1 truncate">
+          <h3 className="text-xl font-display font-bold text-gray-900 hover:text-pink-600 transition-colors mb-1 truncate">
             {product.name}
           </h3>
         </Link>
 
-        <p className="text-sm text-gray-500 line-clamp-2 min-h-[3rem]">
+        <p className="text-sm font-secondary text-gray-500 line-clamp-2 min-h-[3rem]">
           {product.description}
         </p>
 
-        {(product.category === "Makeup" || product.category === "Foundation")
-          ? renderColorPalette()
-          : renderSizes()}
+        {product.variants && renderColorPalette()}
+        {product.sizes && renderSizes()}
 
         <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-          <span className="text-pink-600 font-bold text-sm">
+          <span className="text-pink-600 font-bold font-secondary text-medium">
             ${parseFloat(product.price).toFixed(2)}
           </span>
 
@@ -234,19 +242,19 @@ const ProductCard = ({ product }) => {
               <button
                 onClick={handleAddToCart}
                 disabled={
-                  (["Makeup", "Foundation"].includes(product.category) && !selectedColor) ||
-                  (!["Makeup", "Foundation"].includes(product.category) && !selectedSize)
+                  (product.variants && !selectedColor) ||
+                  (product.sizes && product.sizes.length > 0 && !selectedSize)
                 }
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg font-semibold text-sm transition duration-300 focus:outline-none ${
-                  (["Makeup", "Foundation"].includes(product.category) && !selectedColor) ||
-                  (!["Makeup", "Foundation"].includes(product.category) && !selectedSize)
+                  (product.variants && !selectedColor) ||
+                  (product.sizes && !selectedSize)
                     ? "bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-white border-2 border-pink-500 text-pink-600 hover:bg-pink-500 hover:text-white hover:shadow-[0_0_15px_rgba(236,72,153,0.7)]"
                 }`}
                 aria-label="Add to cart"
               >
-                <FaShoppingCart className="w-4 h-4" />
-                Add to Cart
+                <FaShoppingCart />
+                Add
               </button>
             )}
           </div>

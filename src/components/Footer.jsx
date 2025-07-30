@@ -7,8 +7,8 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-15">
         {/* About Section */}
         <div className="mr-4">
-          <h3 className="text-2xl font-bold text-pink-600 mb-4">Cosmetics</h3>
-          <p className="text-sm leading-relaxed">
+          <h3 className="text-4xl font-display font-extrabold text-pink-600 mb-4">Cosmetics</h3>
+          <p className="text-sm font-secondary leading-relaxed">
             Your destination for radiant beauty products crafted to nourish your skin and uplift your soul. Discover the magic in every bottle.
           </p>
           <div className="flex space-x-4 mt-6">
@@ -27,8 +27,8 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div className="mx-auto">
-          <h4 className="text-xl font-semibold text-pink-600 mb-4">Quick Links</h4>
-          <ul className="space-y-2 text-sm">
+          <h4 className="text-xl font-display font-semibold text-pink-600 mb-4">Quick Links</h4>
+          <ul className="space-y-2 text-sm font-secondary">
             <li>
               <a href="/shop" className="hover:text-pink-500 transition">
                 Shop All Products
@@ -59,8 +59,8 @@ const Footer = () => {
 
         {/* Customer Care */}
         <div className="ml-4">
-          <h4 className="text-xl font-semibold text-pink-600 mb-4">Customer Care</h4>
-          <ul className="space-y-2 text-sm">
+          <h4 className="text-xl font-semibold font-display text-pink-600 mb-4">Customer Care</h4>
+          <ul className="space-y-2 text-sm font-secondary">
             <li>
               <a href="/shipping" className="hover:text-pink-500 transition">
                 Shipping Policy
@@ -91,8 +91,8 @@ const Footer = () => {
 
         {/* Newsletter Signup */}
         <div className="mx-auto">
-          <h4 className="text-xl font-semibold text-pink-600 mb-4">Stay in Touch</h4>
-          <p className="text-sm mb-4">
+          <h4 className="text-xl font-display font-semibold text-pink-600 mb-4">Stay in Touch</h4>
+          <p className="text-sm font-secondary mb-4">
             Subscribe to get the latest updates on new products, sales & more.
           </p>
           <form
@@ -103,11 +103,11 @@ const Footer = () => {
               type="email"
               placeholder="Your email address"
               required
-              className="px-4 py-2 rounded-md border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+              className="px-4 py-2 font-secondary text-sm rounded-md border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
             />
             <button
               type="submit"
-              className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 rounded-md transition"
+              className="bg-pink-800 font-secondary hover:bg-pink-600 text-white font-semibold py-2 rounded-md transition"
             >
               Subscribe
             </button>
@@ -117,7 +117,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-pink-200 text-center py-6 text-xs text-pink-600">
+      <div className="border-t border-pink-200 text-center font-display py-6 text-xl text-pink-600">
         &copy; {new Date().getFullYear()} Cosmetics. All rights reserved.
       </div>
     </footer>

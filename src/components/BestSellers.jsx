@@ -24,7 +24,14 @@ const BestSellers = () => {
   return (
     <div className="py-1 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Best Sellers</h2>
+        <div className="flex justify-center mb-4 mt-5">
+         <img
+          src="/images/2018-06-11_smallBND.png"
+          alt="New arrivals banner"
+          className="object-contain"
+         />
+        </div>
+        <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">Best Sellers</h2>
 
         <div className="relative">
           {/* Products Grid */}

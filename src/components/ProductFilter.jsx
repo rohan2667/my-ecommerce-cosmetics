@@ -13,7 +13,7 @@ const ProductFilter = ({ filters, handleFilterChange }) => (
   <div>
     {FILTER_FIELDS.map(({ key, label }) => (
       <div className="mb-5" key={key}>
-        <label htmlFor={key} className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor={key} className="block text-medium font-bold text-gray-500 mb-1">
           {label}
         </label>
         <select
@@ -21,14 +21,23 @@ const ProductFilter = ({ filters, handleFilterChange }) => (
           id={key}
           value={filters[key] || ""}
           onChange={handleFilterChange}
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm focus:ring-pink-500 focus:border-pink-500"
+          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm shadow-sm font-bold font-secondary text-gray-500 focus:ring-pink-500 focus:border-pink-500"
         >
           <option value="">All</option>
-          {[...new Set(filters.options[key])].map((opt, index) => (
-            <option key={`${opt}-${index}`} value={opt}>
-              {opt}
-            </option>
-          ))}
+          {[...new Set(filters.options[key])].map((opt, index) => {
+            // Ensure opt is defined and has the necessary properties before accessing
+            const optionValue = key === "color" && opt?.name ? opt.name : opt;
+
+            if (key === "color" && !opt?.name) {
+              return null; // Skip if `opt` is not a valid color object
+            }
+
+            return (
+              <option key={`${optionValue}-${index}`} value={optionValue}>
+                {key === "color" ? opt.name : opt} {/* Display name for color */}
+              </option>
+            );
+          })}
         </select>
       </div>
     ))}

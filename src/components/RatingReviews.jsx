@@ -53,7 +53,7 @@ const RatingReviews = ({ reviews, showForm, setShowForm }) => {
       )}
 
       {localReviews.length === 0 && (
-        <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
+        <p className="text-gray-500 font-secondary">No reviews yet. Be the first to review this product!</p>
       )}
 
       {localReviews.map((review, index) => (

@@ -2,69 +2,105 @@ import React, { useState, useEffect, useRef } from "react";
 import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
 
-const ProductDetail = ({ product, onWriteReview }) => {
-  const { name, price, description, ingredients, howToUse, attributes } = product;
+const ProductDetail = ({ product }) => {
+  const {
+    name,
+    brand,
+    price,
+    description,
+    ingredients,
+    howToUse,
+    sizes,
+    variants = [],
+    additionalImages = [],
+    image: primaryImage,
+  } = product;
+
   const { cart, addToCart, removeFromCart, decrementFromCart } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
-  const colors = Array.isArray(attributes.Color)
-    ? attributes.Color
-    : [{ name: attributes.Color, code: attributes.ColorCode || "#ccc", image: product.image }];
+  const hasColorVariants = Array.isArray(variants) && variants.length > 0;
+  const hasSizeOptions = Array.isArray(sizes) && sizes.length > 0;
 
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
-  const [selectedSize, setSelectedSize] = useState(
-    Array.isArray(attributes.Size) ? attributes.Size[0] : attributes.Size
-  );
-  const [quantity, setQuantity] = useState(0);
+  const [selectedVariant, setSelectedVariant] = useState(variants[0] || null);
+  const [selectedSize, setSelectedSize] = useState(hasSizeOptions ? sizes[0] : null);
 
-  const filteredAttributes = Object.entries(attributes).filter(
-    ([key]) => key.toLowerCase() !== "color" && key.toLowerCase() !== "size"
-  );
+  const initialImage = selectedVariant?.image || primaryImage || "";
+  const [mainImage, setMainImage] = useState(initialImage);
 
-  const isWishlisted = wishlist.some((item) => item.id === product.id);
-  const toggleWishlist = () =>
-    isWishlisted ? removeFromWishlist(product.id) : addToWishlist(product);
-
-  useEffect(() => {
-    const existingItem = cart.find(
-      (item) =>
-        item.id === product.id &&
-        item.selectedColor?.name === selectedColor?.name &&
-        item.selectedSize === selectedSize
-    );
-    setQuantity(existingItem?.quantity || 0);
-  }, [cart, product.id, selectedColor, selectedSize]);
-
-  const handleAddToCart = () => {
-    if (!selectedColor || !selectedSize) return;
-    if (quantity === 0) {
-      addToCart({ ...product, selectedColor, selectedSize }, 1);
-    }
-  };
-
-  const handleIncreaseQuantity = () => {
-    addToCart({ ...product, selectedColor, selectedSize }, 1);
-  };
-
-  const handleDecreaseQuantity = () => {
-    if (quantity <= 1) {
-      removeFromCart({ ...product, selectedColor, selectedSize });
-    } else {
-      decrementFromCart({ ...product, selectedColor, selectedSize });
-    }
-  };
-
-  // Zoom state & ref
   const [zoomStyle, setZoomStyle] = useState({});
+  const [quantity, setQuantity] = useState(0);
   const imgRef = useRef(null);
 
+  const [showIngredients, setShowIngredients] = useState(false);
+  const [showHowToUse, setShowHowToUse] = useState(false);
+
+  useEffect(() => {
+    if (hasColorVariants) {
+      setSelectedVariant(variants[0]);
+    } else {
+      setSelectedVariant(null);
+    }
+  }, [variants, hasColorVariants]);
+
+  useEffect(() => {
+    if (hasSizeOptions) {
+      setSelectedSize(sizes[0]);
+    } else {
+      setSelectedSize(null);
+    }
+  }, [sizes, hasSizeOptions]);
+
+  useEffect(() => {
+    if (selectedVariant?.image) {
+      setMainImage(selectedVariant.image);
+    } else if (primaryImage) {
+      setMainImage(primaryImage);
+    }
+  }, [selectedVariant, primaryImage]);
+
+  useEffect(() => {
+    const item = cart.find((item) => {
+      if (hasColorVariants && hasSizeOptions) {
+        return (
+          item.id === product.id &&
+          item.selectedColor?.name === selectedVariant?.color.name &&
+          item.selectedSize === selectedSize
+        );
+      } else if (hasColorVariants) {
+        return item.id === product.id && item.selectedColor?.name === selectedVariant?.color.name;
+      } else if (hasSizeOptions) {
+        return item.id === product.id && item.selectedSize === selectedSize;
+      } else {
+        return item.id === product.id;
+      }
+    });
+    setQuantity(item?.quantity || 0);
+  }, [cart, product.id, selectedVariant, selectedSize, hasColorVariants, hasSizeOptions]);
+
+  const handleColorSelect = (variant) => {
+    setSelectedVariant(variant);
+    setZoomStyle({});
+    setMainImage(variant.image);
+  };
+
+  const handleSizeSelect = (sizeOption) => {
+    setSelectedSize(sizeOption);
+  };
+
+  const handleThumbnailClick = (imgUrl) => {
+    setMainImage(imgUrl);
+    setZoomStyle({});
+  };
+
   const handleMouseMove = (e) => {
-    if (!imgRef.current) return;
+    if (!imgRef.current || !mainImage) return;
     const { left, top, width, height } = imgRef.current.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
+
     setZoomStyle({
-      backgroundImage: `url(${selectedColor.image || product.image})`,
+      backgroundImage: `url(${mainImage})`,
       backgroundPosition: `${x}% ${y}%`,
       backgroundRepeat: "no-repeat",
       backgroundSize: "200%",
@@ -75,178 +111,244 @@ const ProductDetail = ({ product, onWriteReview }) => {
     setZoomStyle({});
   };
 
+  const handleAddToCart = () => {
+    if (hasColorVariants && !selectedVariant) return;
+    if (hasSizeOptions && !selectedSize) return;
+
+    if (quantity === 0) {
+      addToCart(
+        {
+          ...product,
+          ...(hasColorVariants && { selectedColor: selectedVariant.color }),
+          ...(hasSizeOptions && { selectedSize }),
+        },
+        1
+      );
+    }
+  };
+
+  const handleIncreaseQuantity = () => {
+    addToCart(
+      {
+        ...product,
+        ...(hasColorVariants && { selectedColor: selectedVariant.color }),
+        ...(hasSizeOptions && { selectedSize }),
+      },
+      1
+    );
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (quantity <= 1) {
+      removeFromCart({
+        ...product,
+        ...(hasColorVariants && { selectedColor: selectedVariant.color }),
+        ...(hasSizeOptions && { selectedSize }),
+      });
+    } else {
+      decrementFromCart({
+        ...product,
+        ...(hasColorVariants && { selectedColor: selectedVariant.color }),
+        ...(hasSizeOptions && { selectedSize }),
+      });
+    }
+  };
+
+  const isWishlisted = wishlist.some((item) => item.id === product.id);
+  const toggleWishlist = () => {
+    isWishlisted ? removeFromWishlist(product.id) : addToWishlist(product);
+  };
+
   return (
-    <>
-      <div className="flex justify-center gap-12 px-4 max-w-[1200px] mx-auto">
-        {/* Left side: color thumbnails */}
-        <div className="flex flex-col space-y-5">
-          {colors.map((colorOption) => (
+    <div className="max-w-6xl mx-auto bg-white rounded-lg shadow flex flex-wrap gap-10">
+      {/* Thumbnails */}
+      <div className="flex flex-col space-y-4">
+        {hasColorVariants ? (
+          variants.map((variant) => (
             <button
-              key={colorOption.name}
-              onClick={() => setSelectedColor(colorOption)}
-              className={`w-16 h-16 rounded-md border-2 transition-transform transform hover:scale-110 focus:outline-none ${
-                selectedColor.name === colorOption.name
-                  ? "border-pink-600 shadow-lg"
-                  : "border-gray-300"
+              key={variant.color.name}
+              onClick={() => handleColorSelect(variant)}
+              className={`w-16 h-16 border-2 rounded-md overflow-hidden focus:outline-none ${
+                mainImage === variant.image ? "border-pink-600 shadow-lg" : "border-gray-300"
               }`}
-              aria-label={`Select color ${colorOption.name}`}
+              aria-label={`Select variant color ${variant.color.name}`}
             >
-              <img
-                src={colorOption.image || product.image}
-                alt={colorOption.name}
-                className="w-full h-full object-cover rounded-md"
-              />
+              <img src={variant.image} alt={variant.color.name} className="w-full h-full object-cover" />
             </button>
-          ))}
-        </div>
-
-        {/* Main Image with Hover Zoom */}
-        <div className="h-150 flex flex-col items-center">
-          <div
-            ref={imgRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            className="w-[450px] h-[300px] rounded-xl shadow-lg border-4 cursor-zoom-in"
-            style={{
-              borderColor: selectedColor.code || "transparent",
-              backgroundImage: zoomStyle.backgroundImage || `url(${selectedColor.image || product.image})`,
-              backgroundPosition: zoomStyle.backgroundPosition || "center",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: zoomStyle.backgroundSize || "cover",
-              transition: "background-position 0.1s ease"
-            }}
-            aria-label={`${name} product image with zoom`}
-          />
-
-          <div className="mt-5 space-y-3 max-w-[600px] text-center">
-            <h2 className="text-xl font-semibold text-gray-800">Ingredients</h2>
-            <p className="text-gray-700 leading-relaxed">{ingredients}</p>
-            <h2 className="text-xl font-semibold text-gray-800">How to Use</h2>
-            <p className="text-gray-700 leading-relaxed">{howToUse}</p>
-          </div>
-        </div>
-
-        {/* Product Details + Color & Size selectors */}
-        <div className="flex flex-col justify-between max-w-[400px]">
-          <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-4">{name}</h1>
-            <p className="text-2xl text-pink-600 font-semibold mb-6">${price}</p>
-            <p className="text-gray-700 mb-8">{description}</p>
-
-            {/* Color Selection on right side */}
-            {Array.isArray(attributes.Color) && (
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-800 mb-3">Select Color</h3>
-                <div className="flex space-x-4">
-                  {attributes.Color.map((colorOption) => (
-                    <button
-                      key={colorOption.name}
-                      onClick={() => setSelectedColor(colorOption)}
-                      className={`w-12 h-12 rounded-full border-2 transition-transform transform hover:scale-110 focus:outline-none flex items-center justify-center ${
-                        selectedColor.name === colorOption.name
-                          ? "border-pink-600 shadow-lg scale-125"
-                          : "border-gray-300"
-                      }`}
-                      style={{ backgroundColor: colorOption.code }}
-                      aria-label={`Select color ${colorOption.name}`}
-                    >
-                      {/* Add a subtle inner white circle for contrast */}
-                      <div
-                        className="w-6 h-6 rounded-full bg-white bg-opacity-30"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  ))}
-                </div>
-                <p className="mt-3 text-sm text-gray-600">
-                  Selected: <strong>{selectedColor.name}</strong>
-                </p>
-              </div>
-            )}
-
-            {/* Size Selection */}
-            {Array.isArray(attributes.Size) && (
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-800 mb-3">Select Size</h3>
-                <div className="flex space-x-4">
-                  {attributes.Size.map((sizeOption) => (
-                    <button
-                      key={sizeOption}
-                      onClick={() => setSelectedSize(sizeOption)}
-                      className={`px-5 py-2 rounded-lg border-2 font-semibold transition ${
-                        selectedSize === sizeOption
-                          ? "border-pink-600 bg-pink-50 text-pink-700 shadow"
-                          : "border-gray-300 text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      {sizeOption}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Additional Attributes */}
-            {filteredAttributes.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-3">Product Details</h2>
-                <ul className="list-disc list-inside text-sm text-gray-700">
-                  {filteredAttributes.map(([key, value]) => (
-                    <li key={key}>
-                      <strong>{key}:</strong> {Array.isArray(value) ? value.join(", ") : value}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-8 flex flex-col gap-5">
-            <div className="flex items-center gap-4 justify-center sm:justify-start">
+          ))
+        ) : (
+          <>
+            {primaryImage && (
               <button
-                onClick={handleDecreaseQuantity}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-md hover:bg-gray-300 transition disabled:opacity-50"
-                disabled={quantity === 0}
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
-              <span className="text-xl font-semibold w-10 text-center">{quantity}</span>
-              <button
-                onClick={handleIncreaseQuantity}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-md hover:bg-gray-300 transition"
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 py-3 bg-pink-600 text-white font-bold rounded-lg shadow hover:bg-pink-700 transition-all"
-                aria-label="Add to cart"
-              >
-                {quantity > 0 ? "In Cart" : "Add to Cart"}
-              </button>
-
-              <button
-                onClick={toggleWishlist}
-                className={`flex-1 py-3 font-bold rounded-lg shadow transition-all ${
-                  isWishlisted
-                    ? "bg-red-500 text-white hover:bg-red-600"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                onClick={() => handleThumbnailClick(primaryImage)}
+                className={`w-16 h-16 border-2 rounded-md overflow-hidden focus:outline-none ${
+                  mainImage === primaryImage ? "border-pink-600 shadow-lg" : "border-gray-300"
                 }`}
-                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                aria-label="View primary image"
               >
-                {isWishlisted ? "♥ In Wishlist" : "♡ Add to Wishlist"}
+                <img src={primaryImage} alt="Primary product" className="w-full h-full object-cover" />
               </button>
+            )}
+            {additionalImages.map((imgUrl, idx) => (
+              <button
+                key={`additional-${idx}`}
+                onClick={() => handleThumbnailClick(imgUrl)}
+                className={`w-16 h-16 border-2 rounded-md overflow-hidden focus:outline-none ${
+                  mainImage === imgUrl ? "border-pink-600 shadow-lg" : "border-gray-300"
+                }`}
+                aria-label={`View additional image ${idx + 1}`}
+              >
+                <img src={imgUrl} alt={`Additional view ${idx + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </>
+        )}
+      </div>
+
+      {/* Main Image + Accordion Info */}
+      <div className="flex flex-col items-center mr-20">
+        <div
+          ref={imgRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          className="w-[400px] h-[400px] border-4 rounded-lg shadow-md cursor-zoom-in"
+          style={{
+            borderColor: selectedVariant?.color?.code || (hasColorVariants ? "#ddd" : "transparent"),
+            backgroundImage: `url(${mainImage})`,
+            backgroundPosition: zoomStyle.backgroundPosition || "center",
+            backgroundSize: zoomStyle.backgroundSize || "cover",
+            backgroundRepeat: "no-repeat",
+            transition: "background-position 0.1s ease",
+          }}
+          aria-label={`${name} product image`}
+        />
+        {hasColorVariants && (
+          <p className="mt-2 text-sm font-secondary text-gray-500">
+            Hover to zoom – Color: <strong>{selectedVariant?.color.name}</strong>
+          </p>
+        )}
+
+        {/* Collapsible Sections */}
+         <div className="w-full space-y-2 mt-2 mb-3">
+          {ingredients && (
+            <div className="border-t pt-2 border-gray-300">
+              <button
+                onClick={() => setShowIngredients(!showIngredients)}
+                className="w-full text-left font-medium font-secondary text-gray-800 hover:text-pink-600 flex justify-between items-center"
+              >
+                Ingredients
+                <span>{showIngredients ? "−" : "+"}</span>
+              </button>
+              {showIngredients && <p className="text-sm font-secondary text-gray-700 mt-1">{ingredients}</p>}
             </div>
-          </div>
+          )}
+          {howToUse && (
+            <div className="border-t pt-2 border-gray-300">
+              <button
+                onClick={() => setShowHowToUse(!showHowToUse)}
+                className="w-full text-left font-secondary font-medium text-gray-800 hover:text-pink-600 flex justify-between items-center"
+              >
+                How to Use
+                <span>{showHowToUse ? "−" : "+"}</span>
+              </button>
+              {showHowToUse && <p className="text-sm font-secondary text-gray-700 mt-1">{howToUse}</p>}
+            </div>
+          )}
         </div>
       </div>
-    </>
+
+      {/* Product Info & Controls */}
+      <div className="max-w-md space-y-4">
+        <div>
+          <h1 className="text-3xl font-bold font-display text-gray-800 mb-1">{name}</h1>
+          {brand && <p className="text-sm font-secondary text-gray-500 mb-5">{brand}</p>}
+          <p className="text-lg font-secondary font-semibold text-pink-600 mb-5">${price.toFixed(2)}</p>
+          {description && <p className="text-gray-700 font-secondary mb-8">{description}</p>}
+        </div>
+
+        {/* Color Selector */}
+        {hasColorVariants && (
+          <div>
+            <h3 className="font-semibold text-gray-800 font-secondary mb-8">Select Color</h3>
+            <div className="flex space-x-3">
+              {variants.map((variant) => (
+                <button
+                  key={variant.color.name}
+                  onClick={() => handleColorSelect(variant)}
+                  className={`w-10 h-10 mb-5 rounded-full border-2 flex items-center justify-center transition-transform transform focus:outline-none ${
+                    selectedVariant?.color.name === variant.color.name
+                      ? "border-pink-600 shadow-md scale-110"
+                      : "border-gray-300"
+                  }`}
+                  style={{ backgroundColor: variant.color.code }}
+                  aria-label={`Select color ${variant.color.name}`}
+                >
+                  <div className="w-5 h-5 rounded-full bg-white bg-opacity-20" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Size Selector */}
+       {hasSizeOptions && (
+          <div>
+            <h3 className="font-semibold text-gray-800 font-secondary mb-2">Select Size</h3>
+            <div className="flex gap-2">
+              {sizes.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => handleSizeSelect(size)}
+                  className={`px-3 py-1 border text-sm font-secondary rounded transition-all ${
+                    selectedSize === size
+                      ? "border-pink-500 text-pink-600 font-semibold"
+                      : "border-gray-300 text-gray-600"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDecreaseQuantity}
+            disabled={quantity === 0}
+            className="flex items-center justify-center w-5 h-5 rounded bg-gray-200  hover:bg-gray-300 text-lg font-bold disabled:opacity-50"
+          >
+            −
+          </button>
+          <span className="w-6 text-center">{quantity}</span>
+          <button
+            onClick={handleIncreaseQuantity}
+            className="flex items-center justify-center w-5 h-5 rounded bg-gray-200 hover:bg-gray-300 text-lg font-bold"
+          >
+            +
+          </button>
+        </div>
+
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={handleAddToCart}
+            className="px-4 py-2 text-sm font-secondary rounded-full bg-pink-500 hover:bg-pink-600 text-white font-semibold shadow"
+          >
+            {quantity > 0 ? "In Cart" : "Add to Cart"}
+          </button>
+          <button
+            onClick={toggleWishlist}
+            className={`px-4 py-2 text-sm fpont-secondary rounded-full font-semibold shadow ${
+              isWishlisted
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            {isWishlisted ? "♥ In Wishlist" : "♡ Wishlist"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
